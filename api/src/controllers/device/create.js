@@ -1,7 +1,7 @@
 const macAddr = require("node-getmac");
-const dashboardAuth = require("../../auth/dashboardAuth");
 const axios = require("axios");
 const env = require("../../config/env");
+const getDashboardHeader = require("../../auth/headers");
 
 function validateNewDevice(newDevice) {
   if (!newDevice.password) {
@@ -33,15 +33,7 @@ function validateNewDevice(newDevice) {
   }
 }
 
-function getDashboardHeader() {
-  return {
-    headers: {
-      token: dashboardAuth.getTokenForDeviceCreation()
-    }
-  };
-}
-
-const create = () => async (req, res, nex) => {
+const save = () => async (req, res, nex) => {
   let newDevice = req.body.device;
   let whyNewDeviceIsInvalid = validateNewDevice(newDevice);
 
@@ -51,7 +43,7 @@ const create = () => async (req, res, nex) => {
 
   newDevice.macAddress = macAddr;
 
-  let headers = getDashboardHeader();
+  let headers = getDashboardHeader(null);
 
   axios
     .post(env.dashboard.api.url + "device", newDevice, headers)
@@ -59,9 +51,8 @@ const create = () => async (req, res, nex) => {
       res.status(200).send(newDevice);
     })
     .catch(err => {
-      res.status(500).send(err);
-      throw new Error(err);
+      res.status(500).send(JSON.stringify(err.response));
     });
 };
 
-module.exports = create;
+module.exports = save;

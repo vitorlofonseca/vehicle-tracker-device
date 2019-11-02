@@ -10,6 +10,14 @@ class DeviceConfigured extends React.Component {
     this.props.history.push("/configure-device");
   };
 
+  componentWillMount() {
+    let deviceMac = localStorage.getItem("deviceMac");
+    let devicePassword = localStorage.getItem("devicePassword");
+    if (!devicePassword && !deviceMac) {
+      this.props.history.push("/configure-device");
+    }
+  }
+
   render() {
     return (
       <div className="App">
@@ -21,7 +29,7 @@ class DeviceConfigured extends React.Component {
             target="_blank"
             rel="noopener noreferrer"
           >
-            Reconfigure
+            Configure
           </a>
         </header>
       </div>

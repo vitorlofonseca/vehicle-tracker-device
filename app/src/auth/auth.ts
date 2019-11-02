@@ -5,10 +5,12 @@ const getUrl = () => {
   return window.location.href.slice(0, window.location.href.lastIndexOf("/"));
 };
 
-export const getToken = () => {
+export const getToken = (devicePassword: any) => {
   let url = getUrl();
   let date = Date.now();
-  console.log(url);
   let clearToken = url + "|" + date;
+  if (devicePassword) {
+    clearToken += "|" + devicePassword;
+  }
   return CryptoJS.AES.encrypt(clearToken, env.dashboard.api.key).toString();
 };

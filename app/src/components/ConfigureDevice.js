@@ -1,7 +1,7 @@
 import React from "react";
 import "./styles/ConfigureDevice.css";
 import { Form, Button } from "react-bootstrap";
-import { Create } from "../http/device.http";
+import { Save, GetDevice } from "../http/device.http";
 import { sha256 } from "js-sha256";
 import { withRouter } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -24,6 +24,35 @@ class ConfigureDevice extends React.Component {
     };
   }
 
+  getDeviceByMac = () => {
+    let deviceMac = localStorage.getItem("deviceMac");
+    let devicePassword = localStorage.getItem("devicePassword");
+    if (!deviceMac && !devicePassword) {
+      return;
+    }
+
+    GetDevice(deviceMac, devicePassword)
+      .then(res => {
+        let device = {
+          password: res.password,
+          inUse: res.inUse,
+          vehicle: {
+            manufacturer: res.vehicle.manufacturer,
+            model: res.vehicle.model,
+            year: res.vehicle.year,
+            plate: res.vehicle.plate
+          }
+        };
+
+        this.setState({ device });
+      })
+      .catch(err => {});
+  };
+
+  componentWillMount() {
+    this.getDeviceByMac();
+  }
+
   encryptPassword = () => {
     return sha256(this.state.device.password);
   };
@@ -31,8 +60,10 @@ class ConfigureDevice extends React.Component {
   sendData = () => {
     let newDevice = this.state;
     newDevice.device.password = this.encryptPassword();
-    Create(newDevice)
+    localStorage.setItem("devicePassword", newDevice.device.password);
+    Save(newDevice)
       .then(res => {
+        localStorage.setItem("deviceMac", res.data.macAddress);
         this.props.history.push("/");
         toast("Your device is configured!");
       })

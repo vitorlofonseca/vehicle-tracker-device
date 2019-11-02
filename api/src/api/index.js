@@ -5,6 +5,7 @@ const createDevice = require("../controllers/device/create");
 
 const routersInit = () => {
   const router = express();
+  router.get("/device/:macAddress", getDevice());
   router.post("/device", createDevice());
   return router;
 };

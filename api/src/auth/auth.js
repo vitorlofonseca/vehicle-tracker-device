@@ -1,14 +1,19 @@
 const CryptoJS = require("crypto-js");
-const FIELDS_IN_TOKEN = 2;
+const FIELDS_IN_TOKEN_FOR_CREATION = 2;
+const FIELDS_IN_TOKEN = 3;
 const TOKEN_SHELF_LIFE_MILISECONDS = 60000;
 const env = require("../config/env");
 
 function explodeToken(token) {
   let data = token.split("|");
-  if (data.length != FIELDS_IN_TOKEN) {
+
+  if (
+    data.length != FIELDS_IN_TOKEN &&
+    data.length != FIELDS_IN_TOKEN_FOR_CREATION
+  ) {
     return {
       error:
-        "The token must have the origin of request and a date, representing the moment of token's generation"
+        "The token must have the origin of request, a date representing the moment of token's generation, and the password of the device"
     };
   }
   return data;
@@ -20,6 +25,10 @@ function getOriginRequestByToken(token) {
 
 function getDateByToken(token) {
   return explodeToken(token)[1];
+}
+
+function getDevicePassword(token) {
+  return explodeToken(token)[2];
 }
 
 function tokenTimeIsCurrent(generationDateToken) {
@@ -78,6 +87,10 @@ const auth = async (req, env) => {
         TOKEN_SHELF_LIFE_MILISECONDS / 1000 +
         " seconds. You must create another token"
     };
+  }
+
+  if (getDevicePassword(plainToken)) {
+    req.body.devicePassword = getDevicePassword(plainToken);
   }
 
   return { success: true };
