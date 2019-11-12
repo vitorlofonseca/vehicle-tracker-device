@@ -1,0 +1,20 @@
+/**
+* You must create this file with the name "/etc/systemd/system/vehicle-tracker.service"
+*/
+
+[Unit]
+Description=Send Metrics to Vehicle Tracker Dashboard
+
+[Service]
+User=USER
+Restart=always
+RestartSec=2s
+ExecStart=/usr/bin/node /var/www/html/vehicle-tracker-device/api/src/controllers/metricService/send.js
+
+/**
+* After that, you need give the permission to start/stop the service to the user that is running Node.js
+* Edit the file /etc/sudoers, adding the following lines:
+*/
+
+[USERNAME] ALL=(ALL) NOPASSWD: /bin/systemctl start vehicle-tracker.service
+[USERNAME] ALL=(ALL) NOPASSWD: /bin/systemctl stop vehicle-tracker.service
