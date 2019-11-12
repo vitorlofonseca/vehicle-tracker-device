@@ -8,10 +8,10 @@ const getToken = devicePassword => {
   return CryptoJS.AES.encrypt(clearToken, env.dashboard.api.key).toString();
 };
 
-const getTokenForDeviceCreation = () => {
+const getTokenWithoutPassword = () => {
   let date = Date.now();
   let clearToken = deviceMac + "|" + date;
   return CryptoJS.AES.encrypt(clearToken, env.dashboard.api.key).toString();
 };
 
-module.exports = { getToken, getTokenForDeviceCreation };
+module.exports = { getToken, getTokenWithoutPassword };

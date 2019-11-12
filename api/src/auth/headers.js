@@ -5,7 +5,7 @@ const getDashboardHeader = devicePassword => {
   if (devicePassword) {
     token = dashboardAuth.getToken(devicePassword);
   } else {
-    token = dashboardAuth.getTokenForDeviceCreation();
+    token = dashboardAuth.getTokenWithoutPassword();
   }
 
   return {
