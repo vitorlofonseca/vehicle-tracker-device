@@ -4,7 +4,7 @@ const env = require("../../config/env");
 const getDashboardHeader = require("../../auth/headers");
 const JSON = require("circular-json");
 
-const get = () => async (req, res, nex) => {
+const get = () => async (req, res, next) => {
   let devicePassword = req.body.devicePassword;
   let deviceMac = req.params.macAddress;
 

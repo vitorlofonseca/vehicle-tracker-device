@@ -33,3 +33,27 @@ export const GetDevice = (deviceMac: string, devicePassword: string) => {
       }
     });
 };
+
+export const StartStream = (devicePassword: string) => {
+  let headers = getHeaders(devicePassword);
+  return axios
+    .get(env.device.api.url + "device/startStream", headers)
+    .then(res => {
+      return res.data;
+    })
+    .catch(err => {
+      throw err;
+    });
+};
+
+export const StopStream = (devicePassword: string) => {
+  let headers = getHeaders(devicePassword);
+  return axios
+    .get(env.device.api.url + "device/stopStream", headers)
+    .then(res => {
+      return res.data;
+    })
+    .catch(err => {
+      throw err;
+    });
+};
